@@ -2,30 +2,41 @@
   "name": "anime-quiz-tg",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node src/rest.js",
-    "bot": "node bot.js"
+    "start": "node src/index.js",
+    "lint:check": "eslint src",
+    "lint:fix": "eslint --fix --ext .js,.jsx .",
+    "heroku:start": "heroku ps:scale web=1",
+    "heroku:stop": "heroku ps:scale web=0"
   },
   "extends": "eslint-config-airbnb",
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint:fix",
+      "pre-push": "npm run lint:check"
+    }
+  },
   "dependencies": {
     "assert": "^2.0.0",
     "axios": "^0.21.1",
     "eslint-config-airbnb": "^18.2.1",
     "fs": "0.0.1-security",
     "lodash": "^4.17.20",
-    "node-base64-image": "^2.0.1",
+    "node-base64-image": "^2.0.3",
     "node-telegram-bot-api": "^0.51.0",
     "svg2img": "^0.6.0",
     "util": "^0.12.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "commonjs": "0.0.1",
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "eslint-plugin-import": "^2.22.1",
+    "husky": "^4.3.8"
   }
 }

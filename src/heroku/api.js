@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { getRandomInt } = require('./unit');
+const { getRandomInt } = require('../utils');
 
 const DOMAIN = 'https://shikimori.one/api/';
 
@@ -31,7 +31,7 @@ const getAnime = (id) => axios.get(`${DOMAIN}animes/${id}`).then((response) => r
 const getAnimeAssets = (id) => axios.get(`${DOMAIN}animes/${id}/screenshots`).then((response) => response.data);
 
 module.exports = {
+  getAnime,
   getAnimeList,
   getAnimeAssets,
-  getAnime,
 };

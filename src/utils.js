@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 
 /**
  * Генерирует составную картинку
- * @param imageSources - массив картинок
+ * @param imageSources - массив URI картинок
  * @returns {Promise<string>}
  */
 const getImage = async (imageSources) => {
@@ -52,6 +52,6 @@ const getImage = async (imageSources) => {
 };
 
 module.exports = {
-  getImage,
   getRandomInt,
+  getImage,
 };
