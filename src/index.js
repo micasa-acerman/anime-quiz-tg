@@ -1,27 +1,30 @@
+const mongoose = require('mongoose');
 const TelegramBot = require('node-telegram-bot-api');
 const { getQuiz } = require('./bot/functions');
 const { TOKEN, MESSAGES } = require('./config/bot');
-const BUTTONS = require('./config/buttons');
+const { COMMANDS, REPLY_MARKUP } = require('./config/buttons');
+const User = require('./model/User');
 
+mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true });
 const app = new TelegramBot(TOKEN, { polling: true });
 let queue = [];
 
-app.onText(BUTTONS.CMD_START, async (msg) => {
-  app.sendMessage(msg.chat.id, MESSAGES.startMessage, {
-    reply_markup: {
-      resize_keyboard: true,
-      keyboard: [
-        [
-          {
-            text: '❔',
-          },
-        ],
-      ],
+app.onText(new RegExp(COMMANDS.CMD_START), async (msg) => {
+  const user = new User(
+    {
+      username: msg.chat.username,
     },
-  });
+  );
+  await user.save();
+  app.sendMessage(msg.chat.id, MESSAGES.startMessage, { reply_markup: REPLY_MARKUP });
 });
 
-app.onText(BUTTONS.CMD_QUIZ, async (msg) => {
+app.onText(new RegExp(COMMANDS.CMD_STATS), async (msg) => {
+  const user = await User.findOne({ username: msg.chat.username });
+  await app.sendMessage(msg.chat.id, MESSAGES.stats(user), { reply_markup: REPLY_MARKUP });
+});
+
+app.onText(new RegExp(COMMANDS.CMD_QUIZ), async (msg) => {
   const chatId = msg.chat.id;
   try {
     const quiz = await getQuiz();
@@ -50,33 +53,20 @@ app.onText(/.*/, (msg) => {
   const element = queue.find((q) => q.chatId === chatId);
 
   if (element) {
-    if (element.correct === msg.text) {
-      app.sendMessage(chatId, MESSAGES.correctAnswer, {
-        reply_markup: {
-          resize_keyboard: true,
-          keyboard: [
-            [
-              {
-                text: '❔',
-              },
-            ],
-          ],
+    // eslint-disable-next-line max-len
+    const message = element.correct === msg.text ? MESSAGES.correctAnswer : MESSAGES.incorrectAnswer;
+    app.sendMessage(chatId, message, {
+      reply_markup: REPLY_MARKUP,
+    });
+
+    User.findOneAndUpdate(
+      { username: msg.chat.username }, {
+        $inc: {
+          success_attempts: element.correct === msg.text ? 1 : 0,
+          total_attempts: 1,
         },
-      });
-    } else {
-      app.sendMessage(chatId, MESSAGES.incorrectAnswer, {
-        reply_markup: {
-          resize_keyboard: true,
-          keyboard: [
-            [
-              {
-                text: '❔',
-              },
-            ],
-          ],
-        },
-      });
-    }
+      },
+    ).exec();
     queue = queue.filter((q) => q.chatId !== chatId);
   }
 });

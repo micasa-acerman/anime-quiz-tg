@@ -12,11 +12,6 @@ const getQuiz = async () => {
   };
 };
 
-const getImageUri = () => {
-
-};
-
 module.exports = {
   getQuiz,
-  getImageUri,
 };

@@ -26,6 +26,8 @@
     "eslint-config-airbnb": "^18.2.1",
     "fs": "0.0.1-security",
     "lodash": "^4.17.20",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.11.13",
     "node-base64-image": "^2.0.3",
     "node-telegram-bot-api": "^0.51.0",
     "svg2img": "^0.6.0",
