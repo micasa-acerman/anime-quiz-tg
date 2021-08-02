@@ -1,4 +1,4 @@
-const TOKEN = '770256364:AAEMrWtv8k4ATJLb7EJte2_USlUDBuzrH6s';
+const TOKEN = '';
 const RANGS = [
   {
     count: 0,
